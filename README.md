@@ -17,7 +17,7 @@ A lightweight React utility that tracks the changes in component dependencies be
 Install the package via npm:
 
 
-`npm install track-dependancy-changes `
+`npm install @mk/track-dependancy-changes `
 
 ## Usage
 

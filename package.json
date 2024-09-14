@@ -1,6 +1,6 @@
 {
-  "name": "track-dependancy-changes",
-  "version": "0.1.0",
+  "name": "@mk/track-dependancy-changes",
+  "version": "0.0.1",
   "dependencies": {
     "@types/node": "^16.18.108",
     "@types/react": "^18.3.5",
@@ -15,6 +15,12 @@
     "type": "git",
     "url": "git+https://github.com/mehulk05/track-dependancy-changes"
   },
+  "keywords": [
+    "React",
+    "track-dependancy",
+    "reactjs",
+    "track-dependancy-changes"
+  ],
   "author": "Mehul Kothari <mehulkothari05@gmail.com>",
   "license": "MIT",
   "bugs": {
