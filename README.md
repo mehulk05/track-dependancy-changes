@@ -122,3 +122,9 @@ ExampleComponent Rendering 2 times
 ## License
 
 This package is licensed under the MIT License. See the LICENSE file for details.
+
+## Author
+
+-   **Mehul Kothari**  
+    GitHub: [https://github.com/mehulk05](https://github.com/mehulk05)  
+    Email: mehulkothari05@gmail.com

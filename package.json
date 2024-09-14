@@ -1,7 +1,6 @@
 {
   "name": "track-dependancy-changes",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@types/node": "^16.18.108",
     "@types/react": "^18.3.5",
