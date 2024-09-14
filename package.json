@@ -1,5 +1,5 @@
 {
-  "name": "@mk/track-dependancy-changes",
+  "name": "mk-track-dependancy-changes",
   "version": "0.0.1",
   "dependencies": {
     "@types/node": "^16.18.108",
