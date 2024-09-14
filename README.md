@@ -1,46 +1,124 @@
-# Getting Started with Create React App
+# Track-Dependency-Changes
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A lightweight React utility that tracks the changes in component dependencies before and after each render. It also shows the number of times a component has re-rendered, and allows aliasing of dependency names for easier readability.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+-   Track which dependencies in a component have changed before and after each render.
+-   Display the number of times a component has re-rendered.
+-   Alias dependency names for easier tracking and readability.
+-   Print a detailed table showing:
+    -   **Old Value**: The previous value of the dependency.
+    -   **New Value**: The current value of the dependency.
+    -   **Change**: Whether the dependency has changed (`✔️` or `❌`).
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Install the package via npm:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+`npm install track-dependancy-changes `
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Usage
 
-### `npm run build`
+Here’s how you can use the `useTrackDependency` hook in a React component to monitor changes in its dependencies:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Example
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+tsx
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+import React, { useState, useEffect, useCallback } from "react";
+import useTrackDependency from "track-dependancy-changes"; // Import the hook
 
-### `npm run eject`
+const ExampleComponent: React.FC = () => {
+  // States to track
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState("Hello");
+  const [complexState, setComplexState] = useState({ name: "Alice", age: 25 });
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  // A callback function (tracked)
+  const handleClick = useCallback(() => {
+    setCount((prevCount) => prevCount + 1);
+  }, []);
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  // Use the hook to track dependencies and render changes
+  useTrackDependency(
+    [count, text, complexState, handleClick], // Dependencies to track
+    ["Count", "Text", "Complex State", "Handle Click"], // Labels for easier readability
+    "ExampleComponent" // Component name (optional)
+  );
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  return (
+    <div>
+      <h1>useTrackDependency Example</h1>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>Increase Count</button>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+      <p>Text: {text}</p>
+      <button onClick={() => setText(text === "Hello" ? "World" : "Hello")}>
+        Toggle Text
+      </button>
 
-## Learn More
+      <p>Complex State: {JSON.stringify(complexState)}</p>
+      <button
+        onClick={() =>
+          setComplexState((prevState) => ({
+            ...prevState,
+            age: prevState.age + 1,
+          }))
+        }
+      >
+        Increase Age
+      </button>
+    </div>
+  );
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default ExampleComponent;
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+
+### Explanation of the Hook
+
+The `useTrackDependency` hook allows you to monitor state or prop changes in your component, as well as log useful debugging information to the console during each render.
+
+#### Parameters:
+
+1.  **`dependencies` (required):** An array of the dependencies (state, props, or functions) you want to track.
+2.  **`labels` (optional):** An array of strings to alias your dependencies in the logs, making it easier to identify them.
+3.  **`componentName` (optional):** A string representing the name of the component, to make console logs more identifiable.
+
+### Console Output:
+
+Whenever your component renders, the hook logs a table to the console showing:
+
+-   **Old Value**: The value of the dependency before the render.
+-   **New Value**: The value of the dependency after the render.
+-   **Change**: A green tick (`✔️`) if the value has changed, or a red cross (`❌`) if it has not.
+
+Each render will also be logged with the total number of renders of the component.
+
+#### Example Console Log:
+
+```
+ExampleComponent Rendering 2 times
+┌─────────┬────────────────────┬──────────┬───────────┬─────────┐
+│ (index) │    Dependency      │ Old Value │ New Value │ Change │
+├─────────┼────────────────────┼──────────┼───────────┼─────────┤
+│    0    │       Count        │    0     │    1      │    ✔️   │
+│    1    │       Text         │ "Hello"  │ "Hello"   │    ❌   │
+│    2    │   Complex State    │ {name:…} │ {name:…}  │    ❌   │
+│    3    │    Handle Click    │   func   │   func    │    ❌   │ 
+└─────────┴────────────────────┴──────────┴───────────┴─────────┘
+```
+
+### Benefits:
+
+-   **Debugging**: It helps identify which dependencies are causing re-renders and tracks the number of renders for better performance monitoring.
+-   **Readability**: By allowing dependency aliasing, the logs become much clearer, especially in complex components.
+-   **Flexible**: You can track any combination of state, props, or functions and see exactly when and why the component re-renders.
+
+## License
+
+This package is licensed under the MIT License. See the LICENSE file for details.
