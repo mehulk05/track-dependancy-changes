@@ -17,7 +17,7 @@ A lightweight React utility that tracks the changes in component dependencies be
 Install the package via npm:
 
 
-`npm install @mk/track-dependancy-changes `
+`npm install mk-track-dependancy-changes `
 
 ## Usage
 
@@ -29,7 +29,7 @@ tsx
 
 ```
 import React, { useState, useEffect, useCallback } from "react";
-import useTrackDependency from "track-dependancy-changes"; // Import the hook
+import useTrackDependency from "mk-track-dependancy-changes"; // Import the hook
 
 const ExampleComponent: React.FC = () => {
   // States to track

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import useTrackDependency from "../hooks/useTrackDependency";
 
+
 const ExampleComponent: React.FC = () => {
   // States to track
   const [count, setCount] = useState(0);
