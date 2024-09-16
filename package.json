@@ -1,6 +1,6 @@
 {
   "name": "mk-track-dependancy-changes",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A lightweight React utility that tracks the changes in component dependencies before and after each render. It also shows the number of times a component has re-rendered, and allows aliasing of dependency names for easier readability.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

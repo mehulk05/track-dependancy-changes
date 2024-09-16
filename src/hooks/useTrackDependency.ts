@@ -78,8 +78,9 @@ const useTrackDependency = (dependencies: any[], labels: string[] = [],  compone
     );
     const output: Record<string, any> = {}
     changes.forEach(({ oldValue, newValue, hasChanged }, index) => {
-        const icon = hasChanged ? GreenTickIcon : RedCrossIcon; // Use icons based on change
-        output[`"${icon}" ${index}`] = {
+      const  name = labels[index] || `Dependency ${index + 1}`;
+      const icon = hasChanged ? GreenTickIcon : RedCrossIcon; // Use icons based on change
+        output[`"${icon}" - ${name} `] = {
           "Old Value": oldValue,
           "New Value": newValue,
         };

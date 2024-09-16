@@ -104,7 +104,7 @@ Each render will also be logged with the total number of renders of the componen
 ```
 ExampleComponent Rendering 2 times
 ┌─────────┬────────────────────┬──────────┬───────────┬─────────┐
-│ (index) │    Dependency      │ Old Value │ New Value │ Change │
+│ (index) │    Dependency      │ Old Value│ New Value │ Change  │
 ├─────────┼────────────────────┼──────────┼───────────┼─────────┤
 │    0    │       Count        │    0     │    1      │    ✔️   │
 │    1    │       Text         │ "Hello"  │ "Hello"   │    ❌   │
