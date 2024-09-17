@@ -70,8 +70,9 @@ var useTrackDependency = function (dependencies, labels, componentName) {
         var output = {};
         changes.forEach(function (_a, index) {
             var oldValue = _a.oldValue, newValue = _a.newValue, hasChanged = _a.hasChanged;
+            var name = labels[index] || "Dependency ".concat(index + 1);
             var icon = hasChanged ? GreenTickIcon : RedCrossIcon; // Use icons based on change
-            output["\"".concat(icon, "\" ").concat(index)] = {
+            output["\"".concat(icon, "\" - ").concat(name, " ")] = {
                 "Old Value": oldValue,
                 "New Value": newValue,
             };

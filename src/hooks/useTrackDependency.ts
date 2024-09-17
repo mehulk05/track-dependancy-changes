@@ -1,99 +1,150 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useRef, useEffect } from "react";
 
-// Define the green tick icon as a string of Unicode
-const GreenTickIcon = "✔️"; // Unicode green tick icon
-const RedCrossIcon = '❌';  // Unicode red cross icon
-
+// Enum for change tracking icons
+enum ChangeStatusIcon {
+  Changed = "✅",
+  Unchanged = "❌",
+}
 const isObject = (element: any) => {
-  return Object.prototype.toString.call(element) === '[object Object]';
+  return Object.prototype.toString.call(element) === "[object Object]";
 };
 
-const deepEqual = (a: any, b: any) => {
-    // Implement deep equality check (you might use a library like lodash for this)
-    return JSON.stringify(a) === JSON.stringify(b);
-  };
-
-  function getStringifyInfo(dependencyItem: any) {
-    /**
-     * Printing the info into viewable format
-     */
-    if (isObject(dependencyItem) || Array.isArray(dependencyItem)) {
-      let ans;
-      try {
-        ans = JSON.stringify(dependencyItem, null, 2);
-      } catch (e) {
-        ans = 'CIRCULAR JSON';
-      }
-      return ans;
+function formatDependencyValue(dependencyItem: any) {
+  if (isObject(dependencyItem) || Array.isArray(dependencyItem)) {
+    let ans;
+    try {
+      ans = JSON.stringify(dependencyItem, null, 2);
+    } catch (e) {
+      ans = "CIRCULAR JSON";
     }
-  
-    return dependencyItem;
+    return ans;
   }
+  return dependencyItem;
+}
 
-  const getFunctionName = (func: (...args: any[]) => void): string => {
-    if ((func as any)?.name) {
-      return (func as any).name;
-    }
-    return "Anonymous Function";
+
+function createChangeStatusEntry(
+  current: any,
+  previous: any,
+  label: string,
+  useFormatting: boolean
+) {
+  const oldValue = formatDependencyValue(previous);
+  const newValue = formatDependencyValue(current);
+  const oldValueWithoutFormatting = previous;
+  const newValueWithoutFormatting = current;
+
+  const isChanged = current !== previous;
+
+  const entry = {
+    "Dependency Name": label,
+    "Old Value": isChanged
+      ? (useFormatting ? oldValue : oldValueWithoutFormatting)
+      : (useFormatting ? newValue : newValueWithoutFormatting),
+    "New Value": isChanged
+      ? (useFormatting ? newValue : newValueWithoutFormatting)
+      : (useFormatting ? newValue : newValueWithoutFormatting),
+    Changed: isChanged
+      ? ChangeStatusIcon.Changed
+      : ChangeStatusIcon.Unchanged,
   };
-  
-const useTrackDependency = (dependencies: any[], labels: string[] = [],  componentName = 'Component') => {
+
+  return entry;
+}
+
+/**
+ * Custom hook to track and log dependency changes in a React component.
+ * @param dependencies Array of dependencies to track.
+ * @param labels Optional array of labels for dependencies (for readability in logs).
+ * @param componentName Optional component name for more informative logs.
+ */
+const useTrackDependency = (
+  dependencies: any[],
+  labels: string[] = [],
+  componentName = "Component"
+) => {
   const prevValuesRef = useRef<any[]>([]);
   const renderCountRef = useRef(0);
 
+  const dependencyRef = useRef(dependencies);
+
+  let isDependencyArr = Array.isArray(dependencyRef.current);
+
   useEffect(() => {
+    if (!(dependencyRef.current && isDependencyArr)) {
+      return;
+    }
+
+
     renderCountRef.current += 1;
     const renderCount = renderCountRef.current;
 
-    const prevValues = prevValuesRef.current;
-    const changes = dependencies.map((dep, index) => {
-      let displayValue = "";
-      if (typeof dep === "function") {
-        displayValue = getFunctionName(dep);
-      } else {
-        displayValue = dep;
-      }
-
-      return {
-        name: labels[index] || `Dependency ${index + 1}`,
-        oldValue: prevValues[index],
-        newValue: displayValue,
-        hasChanged: !deepEqual(prevValues[index], displayValue),
-      };
-    });
+    console.log(
+      "%c///////////////////// Starting Dependency Change Tracking ///////////////////////",
+      "background: #a6f2b7; color: #000; font-weight: bold; padding: 2px 5px;"
+    );
 
     // Log the rendering information and changes to the console
-    console.group(`${componentName} Rendering ${renderCount} ${renderCount === 1 ? 'time' : 'times'}`);
-
-
-    console.table(
-      changes.map(({ name, oldValue, newValue, hasChanged }) => ({
-        Dependency: name,
-        "Old Value":getStringifyInfo(oldValue),
-        "New Value": getStringifyInfo(newValue),
-        Change: hasChanged ? GreenTickIcon : RedCrossIcon,
-      }))
+    console.group(
+      `${componentName} Rendering ${renderCount} ${
+        renderCount === 1 ? "time" : "times"
+      }`
     );
-    const output: Record<string, any> = {}
-    changes.forEach(({ oldValue, newValue, hasChanged }, index) => {
-      const  name = labels[index] || `Dependency ${index + 1}`;
-      const icon = hasChanged ? GreenTickIcon : RedCrossIcon; // Use icons based on change
-        output[`"${icon}" - ${name} `] = {
-          "Old Value": oldValue,
-          "New Value": newValue,
-        };
-      });
-  
-  
 
-    console.log(output);
+
+    const generateChangesSummaries = () => {
+      const summaryWithFormatting: Record<number, object> = {};
+      const summaryWithoutFormatting: Record<number, object> = {};
+
+      dependencies.forEach((currentDep, index) => {
+        const label = labels[index] || `Dependency ${index + 1}`;
+        const previousDep = dependencyRef.current[index];
+
+        // Create formatted entry
+        summaryWithFormatting[index] = createChangeStatusEntry(
+          currentDep,
+          previousDep,
+          label,
+          true
+        );
+
+        // Create non-formatted entry
+        summaryWithoutFormatting[index] = createChangeStatusEntry(
+          currentDep,
+          previousDep,
+          label,
+          false
+        );
+
+        // Update ref with the new value
+        dependencyRef.current[index] = currentDep;
+        // Update ref with the new value
+        dependencyRef.current[index] = currentDep;
+      });
+
+      return {
+        summaryWithFormatting,
+        summaryWithoutFormatting,
+      };
+    };
+
+    const { summaryWithFormatting, summaryWithoutFormatting } =
+      generateChangesSummaries();
+
+    console.table(summaryWithFormatting);
+    console.dir(summaryWithoutFormatting, null);
+
     console.groupEnd();
 
+    console.log(
+      "%c//////////////////////////////////////////////////////////////////////////////",
+      "background: #f49f5875; color: #000; font-weight: bold; padding: 2px 5px;"
+    );
     // Update the ref with the current values
-    prevValuesRef.current = dependencies;
-  }, [componentName, dependencies, labels]);
+    prevValuesRef.current = dependencies.map((dep) =>
+      isObject(dep) ? JSON.parse(JSON.stringify(dep)) : dep
+    ); // Deep copy if it's an object
+  }, [isDependencyArr, componentName, dependencies, labels]);
 };
 
 export default useTrackDependency;
