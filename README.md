@@ -33,7 +33,7 @@ tsx
 
 ```
 import React, { useState, useEffect, useCallback } from "react";
-import useTrackDependency from "track-dependancy-changes"; // Import the hook
+import {useTrackDependency} from "track-dependancy-changes"; // Import the hook
 
 const ExampleComponent: React.FC = () => {
   // States to track
