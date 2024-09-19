@@ -12,6 +12,10 @@ A lightweight React utility that tracks the changes in component dependencies be
     -   **New Value**: The current value of the dependency.
     -   **Change**: Whether the dependency has changed (`✔️` or `❌`).
 
+## Blog
+
+For a more detailed guide, check out this [blog post](https://medium.com/@mehul-kothari/a-detailed-guide-to-the-mk-track-dependency-changes-package-tracking-dependency-changes-in-react-5e488bde43a9).
+
 ## Installation
 
 Install the package via npm:
